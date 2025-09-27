@@ -46,7 +46,7 @@ annotation_map = {
 
 # Mentions
 def _mention_link(content, url):
-    return f"([{content}]({url}])"
+    return f"[{content}]({url})"
 
 
 def user(information: dict):
@@ -65,8 +65,20 @@ def database(information: dict):
     return _mention_link(information["content"], information["url"])
 
 
+def link_mention(information: dict):
+    info = information["link_mention"]
+    return _mention_link(info["title"], info["href"])
+
+
+def link_preview(information: dict):
+    info = information["link_preview"]
+    return _mention_link(info["url"], info["url"])
+
+
 def mention_information(payload: dict):
     information = dict()
+    if "mention" in payload:
+        return payload["mention"]
     if payload["href"]:
         information["url"] = payload["href"]
         if payload["plain_text"] != "Untitled":
@@ -79,7 +91,14 @@ def mention_information(payload: dict):
     return information
 
 
-mention_map = {"user": user, "page": page, "database": database, "date": date}
+mention_map = {
+    "user": user,
+    "page": page,
+    "database": database,
+    "date": date,
+    "link_mention": link_mention,
+    "link_preview": link_preview
+}
 
 
 def richtext_word_converter(richtext: dict) -> str:
